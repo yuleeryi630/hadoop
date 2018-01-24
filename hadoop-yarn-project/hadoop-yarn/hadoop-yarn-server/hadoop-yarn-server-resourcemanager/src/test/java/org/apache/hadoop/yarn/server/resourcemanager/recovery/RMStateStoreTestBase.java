@@ -196,7 +196,8 @@ public class RMStateStoreTestBase {
     when(mockAttempt.getRMAppAttemptMetrics())
         .thenReturn(mockRmAppAttemptMetrics);
     when(mockRmAppAttemptMetrics.getAggregateAppResourceUsage())
-        .thenReturn(new AggregateAppResourceUsage(new HashMap<>()));
+        .thenReturn(new AggregateAppResourceUsage(
+            new HashMap<>(), new HashMap<>()));
     dispatcher.attemptId = attemptId;
     store.storeNewApplicationAttempt(mockAttempt);
     waitNotify(dispatcher);
@@ -294,7 +295,8 @@ public class RMStateStoreTestBase {
     when(mockRemovedAttempt.getRMAppAttemptMetrics())
         .thenReturn(mockRmAppAttemptMetrics);
     when(mockRmAppAttemptMetrics.getAggregateAppResourceUsage())
-        .thenReturn(new AggregateAppResourceUsage(new HashMap<>()));
+        .thenReturn(new AggregateAppResourceUsage(
+            new HashMap<>(), new HashMap<>()));
     attempts.put(attemptIdRemoved, mockRemovedAttempt);
     store.removeApplication(mockRemovedApp);
 
@@ -371,7 +373,8 @@ public class RMStateStoreTestBase {
             oldAttemptState.getStartTime(), RMAppAttemptState.FINISHED,
             "myTrackingUrl", "attemptDiagnostics",
             FinalApplicationStatus.SUCCEEDED, 100,
-            oldAttemptState.getFinishTime(), new HashMap<>(), new HashMap<>());
+            oldAttemptState.getFinishTime(), new HashMap<>(),
+            new HashMap<>(), new HashMap<>());
     store.updateApplicationAttemptState(newAttemptState);
 
     // test updating the state of an app/attempt whose initial state was not
@@ -396,7 +399,8 @@ public class RMStateStoreTestBase {
             oldAttemptState.getStartTime(), RMAppAttemptState.FINISHED,
             "myTrackingUrl", "attemptDiagnostics",
             FinalApplicationStatus.SUCCEEDED, 111,
-            oldAttemptState.getFinishTime(), new HashMap<>(), new HashMap<>());
+            oldAttemptState.getFinishTime(), new HashMap<>(),
+            new HashMap<>(), new HashMap<>());
     store.updateApplicationAttemptState(dummyAttempt);
 
     // let things settle down
