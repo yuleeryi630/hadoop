@@ -44,6 +44,7 @@ import org.apache.hadoop.hdds.scm.protocolPB
 import org.apache.hadoop.hdds.scm.protocolPB.StorageContainerLocationProtocolPB;
 import org.apache.hadoop.hdds.scm.server.StorageContainerManager;
 import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.hadoop.security.authentication.client.AuthenticationException;
 import org.apache.hadoop.test.GenericTestUtils;
 
 import org.slf4j.Logger;
@@ -287,9 +288,16 @@ public final class MiniOzoneClusterImpl implements MiniOzoneCluster {
     public MiniOzoneCluster build() throws IOException {
       DefaultMetricsSystem.setMiniClusterMode(true);
       initializeConfiguration();
-      StorageContainerManager scm = createSCM();
-      scm.start();
-      KeySpaceManager ksm = createKSM();
+      StorageContainerManager scm;
+      KeySpaceManager ksm;
+      try {
+        scm = createSCM();
+        scm.start();
+        ksm = createKSM();
+      } catch (AuthenticationException ex) {
+        throw new IOException("Unable to build MiniOzoneCluster. ", ex);
+      }
+
       ksm.start();
       List<HddsDatanodeService> hddsDatanodes = createHddsDatanodes(scm);
       hddsDatanodes.forEach((datanode) -> datanode.start(null));
@@ -316,7 +324,8 @@ public final class MiniOzoneClusterImpl implements MiniOzoneCluster {
      *
      * @throws IOException
      */
-    private StorageContainerManager createSCM() throws IOException {
+    private StorageContainerManager createSCM()
+        throws IOException, AuthenticationException {
       configureSCM();
       SCMStorage scmStore = new SCMStorage(conf);
       scmStore.setClusterId(clusterId);
