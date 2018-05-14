@@ -344,7 +344,8 @@ public final class MiniOzoneClusterImpl implements MiniOzoneCluster {
      *
      * @throws IOException
      */
-    private KeySpaceManager createKSM() throws IOException {
+    private KeySpaceManager createKSM()
+        throws IOException, AuthenticationException {
       configureKSM();
       KSMStorage ksmStore = new KSMStorage(conf);
       ksmStore.setClusterId(clusterId);
